@@ -1,0 +1,76 @@
+div {
+    margin: 0 auto;
+    width: 21cm;
+    padding: 5mm;
+}
+
+p {
+    text-indent: 2em;
+}
+
+img {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 20cm;
+    height: auto;
+}
+
+blockquote {
+    background-color: lightgray;
+    padding-left: 5mm;
+    padding-right: 5mm;
+    padding-top: 3mm;
+    padding-bottom: 3mm;
+}
+
+pre code {
+	padding:0;
+	font-size:12px;
+	border:none;
+}
+
+pre,code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+pre {
+	margin:1em 0;
+	font-size:12px;
+	border:1px solid #ddd;
+	padding:5px;
+	line-height:1.5em;
+	color:#444;
+	overflow:auto;
+	-webkit-box-shadow:rgba(0,0,0,0.07) 0 1px 2px inset;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;border-radius:3px;
+}
+
+table {
+	margin: 0 auto;
+}
+
+table {
+        font-family: verdana,arial,sans-serif;
+        font-size:11px;
+        color:#333333;
+        border-width: 1px;
+        border-color: #a9c6c9;
+        border-collapse: collapse;
+	}
+
+table th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+table td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+.oddrowcolor{
+    background-color:#d4e3e5;
+}
+.evenrowcolor{
+    background-color:#c3dde0;
+}
