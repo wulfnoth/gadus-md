@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,18 +62,22 @@ public class FinalPage {
         content = sb.toString();
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public void setContent(String content) {
         this.content = replacePreTag(content);
     }
 
-    public String getHTML() {
+    public String getHTML(Map<String, String> resourceInfo) {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\n<html>\n<head>\n<meta content=\"charset=utf-8\"/>\n<title>")
                 .append(header).append("</title>\n")
                 .append("<link type=\"text/css\" rel=\"stylesheet\" href=\"css/sh_nedit.css\"/>\n")
-                .append("<link rel=\"stylesheet\" href=\"css/content.css\" type=\"text/css\"/>\n")
-                .append("<script type=\"text/javascript\" src=\"js/sh_main.js\"></script>\n")
-                .append("<script type=\"text/javascript\" src=\"js/sh_python.js\"></script>\n")
+                .append(String.format("<link rel=\"stylesheet\" href=\"%s/content.css\" type=\"text/css\"/>\n", resourceInfo.get("css")))
+                .append(String.format("<script type=\"text/javascript\" src=\"%s/sh_main.js\"></script>\n", resourceInfo.get("js")))
+                .append(String.format("<script type=\"text/javascript\" src=\"%s/sh_python.js\"></script>\n", resourceInfo.get("js")))
                 .append("<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>\n")
                 .append("<script type=\"text/x-mathjax-config\">\n" +
                         "    MathJax.Hub.Config({\n" +
@@ -86,6 +91,7 @@ public class FinalPage {
                 .append("</div>\n")
                 .append("</body>\n")
                 .append("</html>");
+
         return sb.toString();
     }
 
