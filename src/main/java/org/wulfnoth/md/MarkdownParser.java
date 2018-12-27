@@ -15,53 +15,106 @@ import java.util.stream.Collectors;
 
 public class MarkdownParser {
 
-    private static Map<String, String> placeholders = new HashMap<>();
+    private List<CustomLabel> labels;
+    private String content;
+    private Map<String, String> placeholders;
 
-    private static String replaceMathJax(String content) {
+    public MarkdownParser(String content) {
+        CustomLabel label = new CustomLabel("$$", false, CustomLabel.KEEP);
+        labels = new ArrayList<>();
+        labels.add(label);
+        placeholders = new HashMap<>();
+        this.content = content;
+    }
 
-        Random random = new Random();
-        int startIndex = -2;
+    private Set<String> findLabelCrossLine(String label) {
+        Set<String> result = new HashSet<>();
+        int startIndex = 0 - label.length();
         int findIndex;
         boolean findLeft = true;
-        while ((findIndex = StringUtils.indexOf(content, "$$", startIndex+2)) != -1) {
+        while ((findIndex = StringUtils.indexOf(content, label, startIndex+label.length())) != -1) {
             if (findLeft) {
                 startIndex = findIndex;
                 findLeft = false;
             } else {
-//                System.out.println(content.substring(startIndex, findIndex+2));
                 findLeft = true;
-                String placeholder = "\nreplace" + random.nextLong() + "replace\n";
-                placeholders.put(placeholder.substring(1, placeholder.length()-1), content.substring(startIndex, findIndex+2));
-//                content = StringUtils.replace(content, content.substring(startIndex, findIndex+2), placeholder);
+//                String placeholder = "\nreplace" + random.nextLong() + "replace\n";
+//                placeholders.put(placeholder.substring(1, placeholder.length()-1), content.substring(startIndex, findIndex+2));
+                result.add(content.substring(startIndex, findIndex + label.length()));
                 startIndex = findIndex;
             }
         }
-        for (String key : placeholders.keySet()) {
-            content = StringUtils.replace(content, placeholders.get(key), key);
-        }
-//        System.out.println(placeholders.size());
 
-        return content;
+        return result;
     }
 
-    private static String restoreMathJax(String content) {
-        if (content.contains("<h1>Tree Boosting</h1>"))
-            System.out.println(placeholders.size());
-        for (String key : placeholders.keySet()) {
-//            System.out.println(placeholders.get(key));
-            content = StringUtils.replace(content, key, placeholders.get(key));
-        }
-//        System.out.println(content);
+    private Map<String, String> findLabelInLine() {
+        return null;
+    }
+
+    private String customReplace(List<CustomLabel> list) {
+        final Random random = new Random(System.currentTimeMillis());
+        Set<Long> usedHolder = new HashSet<>();
+        list.forEach(customLabel -> {
+            if (customLabel.isInline()) {
+                findLabelInLine();
+                // todo
+            } else {
+                findLabelCrossLine(customLabel.getLabel()).forEach(c -> {
+                    long holder;
+                    do {
+                        holder = random.nextLong();
+                    } while (usedHolder.contains(holder));
+                    usedHolder.add(holder);
+                    String placeholder = "replace" + holder + "replace";
+                    placeholders.put(placeholder, c);
+                    content = StringUtils.replace(content, c, String.format("\n%s\n", placeholder));
+                });
+            }
+        });
+
+
 //        for (String key : placeholders.keySet()) {
-////            System.out.println(placeholders.get(key));
-//            System.out.println(key);
+//            content = StringUtils.replace(content, placeholders.get(key), key);
 //        }
         return content;
     }
 
-    public static FinalPage parser(File file) {
+    private String restoreMathJax() {
+        if (content.contains("<h1>Tree Boosting</h1>"))
+            System.out.println(placeholders.size());
+        for (String key : placeholders.keySet()) {
+            content = StringUtils.replace(content, key, placeholders.get(key));
+        }
+        return content;
+    }
+
+    private FinalPage handle() {
         placeholders.clear();
         final FinalPage page = new FinalPage();
+
+        content = customReplace(labels);
+
+        MutableDataSet options = new MutableDataSet();
+        options.setFrom(ParserEmulationProfile.MARKDOWN);
+        options.set(Parser.EXTENSIONS, Collections.singletonList(TablesExtension.create()));
+        Parser parser = Parser.builder(options).build();
+        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+
+        Node document = parser.parse(content);
+
+        content = renderer.render(document);
+        page.setContent(restoreMathJax());
+
+        return page;
+    }
+
+    public static FinalPage parser(String content) {
+
+        return new MarkdownParser(content).handle();
+    }
+
+    public static FinalPage parser(File file) {
         List<String> list = new ArrayList<>();
 
         try(InputStream stream = new FileInputStream(file))
@@ -73,30 +126,7 @@ public class MarkdownParser {
         }
 
         final StringBuilder sb = new StringBuilder();
-        list.forEach(line -> {
-            String h = InfoExtractor.extractHeader1(line);
-            if (h != null)
-                page.setHeader(h);
-            sb.append(line).append("\n");
-        });
-        String content = replaceMathJax(sb.toString());
-
-//        System.out.println(content);
-
-        MutableDataSet options = new MutableDataSet();
-        options.setFrom(ParserEmulationProfile.MARKDOWN);
-        options.set(Parser.EXTENSIONS, Collections.singletonList(TablesExtension.create()));
-        Parser parser = Parser.builder(options).build();
-        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-
-        Node document = parser.parse(content);
-
-        page.setContent(restoreMathJax(renderer.render(document)));
-
-//        if (page.getContent().contains("<h1>Tree Boosting</h1>"))
-//            System.out.println(page.getContent());
-
-        return page;
+        list.forEach(line -> sb.append(line).append("\n"));
+        return parser((sb.toString()));
     }
-
 }
