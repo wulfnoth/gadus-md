@@ -87,8 +87,12 @@ public class Test {
     public static void main(String[] args) throws IOException {
 //        new Test().entireDir("C:\\Users\\congj\\OneDrive\\Documents\\Feature Engineering");
 
-        Test t = new Test();
-        t.entireDir("C:\\Users\\congj\\Desktop\\notebook", "C:\\Users\\congj\\Desktop\\result");
+//        Test t = new Test();
+//        t.entireDir("C:\\Users\\congj\\Desktop\\notebook", "C:\\Users\\congj\\Desktop\\result");
+        FinalPage page = MarkdownParser.parser("D:\\workspace\\IdeaProjects\\gadus-service\\data\\xgboost\\paper_note.md");
+//        System.out.println(page.getContent());
+//        System.out.println(page.getHTML(new HashMap<>()));
+        page.getHTML(new HashMap<>());
 //        t.entireDir("C:\\Users\\congj\\Desktop\\notebook\\xgboost\\debug", "C:\\Users\\congj\\Desktop\\result");
 
 //        t.entireDir();

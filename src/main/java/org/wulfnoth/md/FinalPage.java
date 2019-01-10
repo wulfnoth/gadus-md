@@ -78,6 +78,7 @@ public class FinalPage {
                 .append(String.format("<link rel=\"stylesheet\" href=\"%s/content.css\" type=\"text/css\"/>\n", resourceInfo.get("css")))
                 .append(String.format("<script type=\"text/javascript\" src=\"%s/sh_main.js\"></script>\n", resourceInfo.get("js")))
                 .append(String.format("<script type=\"text/javascript\" src=\"%s/sh_python.js\"></script>\n", resourceInfo.get("js")))
+//                .append(String.format("<script type=\"text/javascript\" src=\"%s/mathjax.js\"></script>\n", resourceInfo.get("js")))
                 .append("<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>\n")
                 .append("<script type=\"text/x-mathjax-config\">\n" +
                         "    MathJax.Hub.Config({\n" +

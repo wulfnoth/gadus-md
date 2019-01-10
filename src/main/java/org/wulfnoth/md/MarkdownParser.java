@@ -127,6 +127,7 @@ public class MarkdownParser {
 
         final StringBuilder sb = new StringBuilder();
         list.forEach(line -> sb.append(line).append("\n"));
+        System.out.println(sb.toString());
         return parser((sb.toString()));
     }
 }
