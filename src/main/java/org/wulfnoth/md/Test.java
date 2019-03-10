@@ -89,10 +89,10 @@ public class Test {
 
 //        Test t = new Test();
 //        t.entireDir("C:\\Users\\congj\\Desktop\\notebook", "C:\\Users\\congj\\Desktop\\result");
-        FinalPage page = MarkdownParser.parser("D:\\workspace\\IdeaProjects\\gadus-service\\data\\xgboost\\paper_note.md");
+        FinalPage page = MarkdownParser.parser(new File("D:\\notebook\\decision tree\\ccp(cost complexity pruning).md"));
 //        System.out.println(page.getContent());
 //        System.out.println(page.getHTML(new HashMap<>()));
-        page.getHTML(new HashMap<>());
+        System.out.println(page.getHTML(new HashMap<>()));
 //        t.entireDir("C:\\Users\\congj\\Desktop\\notebook\\xgboost\\debug", "C:\\Users\\congj\\Desktop\\result");
 
 //        t.entireDir();

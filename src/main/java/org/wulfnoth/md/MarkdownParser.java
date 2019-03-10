@@ -7,6 +7,7 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 import org.apache.commons.lang3.StringUtils;
+import org.wulfnoth.gadus.md.handle.TableHandler;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -81,8 +82,6 @@ public class MarkdownParser {
     }
 
     private String restoreMathJax() {
-        if (content.contains("<h1>Tree Boosting</h1>"))
-            System.out.println(placeholders.size());
         for (String key : placeholders.keySet()) {
             content = StringUtils.replace(content, key, placeholders.get(key));
         }
@@ -95,9 +94,11 @@ public class MarkdownParser {
 
         content = customReplace(labels);
 
+        content = TableHandler.handle(content);
+
         MutableDataSet options = new MutableDataSet();
         options.setFrom(ParserEmulationProfile.MARKDOWN);
-        options.set(Parser.EXTENSIONS, Collections.singletonList(TablesExtension.create()));
+//        options.set(Parser.EXTENSIONS, Collections.singletonList(TablesExtension.create()));
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
@@ -105,7 +106,6 @@ public class MarkdownParser {
 
         content = renderer.render(document);
         page.setContent(restoreMathJax());
-
         return page;
     }
 
@@ -117,8 +117,7 @@ public class MarkdownParser {
     public static FinalPage parser(File file) {
         List<String> list = new ArrayList<>();
 
-        try(InputStream stream = new FileInputStream(file))
-        {
+        try(InputStream stream = new FileInputStream(file)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
             list = reader.lines().collect(Collectors.toList());
         } catch (IOException e) {
@@ -127,7 +126,9 @@ public class MarkdownParser {
 
         final StringBuilder sb = new StringBuilder();
         list.forEach(line -> sb.append(line).append("\n"));
-        System.out.println(sb.toString());
-        return parser((sb.toString()));
+//        System.out.println(sb.toString());
+        FinalPage finalPage = parser((sb.toString()));
+        finalPage.replaceImgTag(file.getParent());
+        return finalPage;
     }
 }
